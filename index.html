@@ -1,0 +1,3384 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğa Dostu Enerji Analiz & Tasarruf Paneli 🌿⚡</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js (CDN ile yüklenir, çevrimdışı fallback destekli) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #15803d;
+            --primary-light: #22c55e;
+            --primary-dark: #14532d;
+            --secondary: #059669;
+            --accent: #10b981;
+            --accent-soft: #ecfdf5;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0284c7;
+            
+            --bg-color: #f2f8f4;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f8faf8;
+            --bg-card: #ffffff;
+            
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #64748b;
+            
+            --border: #d1fae5;
+            --border-subtle: #e2e8f0;
+            --border-focus: #10b981;
+            
+            --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 4px 12px rgba(21, 128, 61, 0.06);
+            --shadow-md: 0 10px 25px -5px rgba(21, 128, 61, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 35px -5px rgba(21, 128, 61, 0.12);
+            
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px 16px 60px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .header-top-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-header-quick {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-header-quick:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f0fdf4;
+            transform: translateY(-1px);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e6f7ec;
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xs);
+        }
+
+        .brand-badge span.pulse-dot {
+            width: 9px;
+            height: 9px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .header-title {
+            color: var(--primary-dark);
+            font-size: 2.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* TARIFF BAR */
+        .tariff-bar {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .tariff-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .tariff-tag {
+            background: #f0fdf4;
+            color: var(--primary-dark);
+            border: 1px solid #bbf7d0;
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tariff-type-selector {
+            display: inline-flex;
+            background: #f1f5f9;
+            padding: 3px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .tariff-type-btn {
+            border: none;
+            background: transparent;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tariff-type-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .tariff-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tariff-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-subtle);
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .tariff-input-group:focus-within {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+        }
+
+        .tariff-input-group span {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: #eef2f6;
+            color: #475569;
+        }
+
+        .tariff-input {
+            width: 80px;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-align: right;
+            outline: none;
+            font-family: inherit;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs {
+            display: flex;
+            background: #e2f2e7;
+            padding: 6px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            gap: 6px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 18px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        /* CARD SYSTEM */
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .card-header {
+            padding: 20px 28px;
+            background: linear-gradient(to right, #fbfdfc, #f4faf6);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        /* DEVICE SELECTION */
+        .device-selector-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .device-selector-wrapper label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.02rem;
+        }
+
+        .select-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        select.custom-select {
+            flex: 1;
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #d1e7d8;
+            border-radius: var(--radius-md);
+            font-size: 1.02rem;
+            font-family: inherit;
+            background: white;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2315803d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+        }
+
+        select.custom-select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+        }
+
+        .btn-custom-device {
+            padding: 14px 20px;
+            background: #eef8f2;
+            color: var(--primary);
+            border: 2px dashed #86efac;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-custom-device:hover {
+            background: #dcfce7;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* DEVICE ADJUSTMENT PANEL */
+        .device-adjust-panel {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .device-adjust-panel.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .adjust-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .device-title-area h3 {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .device-title-area p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .eco-rating-badge {
+            background: #dcfce7;
+            color: #14532d;
+            border: 1px solid #bbf7d0;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* CONTROLS GRID */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 16px;
+        }
+
+        .control-item {
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-xs);
+            transition: var(--transition);
+        }
+
+        .control-item:hover {
+            border-color: #bbf7d0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .control-item label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .quick-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 4px;
+        }
+
+        .control-item input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            font-family: inherit;
+            background: #fafbfc;
+            transition: var(--transition);
+        }
+
+        .control-item input[type="number"]:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            margin-top: 12px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            height: 6px;
+        }
+
+        /* ECO SWITCH BAR */
+        .eco-switch-bar {
+            margin-top: 20px;
+            background: #eefbf3;
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .eco-switch-bar:hover {
+            background: #e3f8eb;
+            border-color: #86efac;
+        }
+
+        .eco-switch-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .eco-switch-info strong {
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        /* SWITCH TOGGLE */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* ACTIONS GROUP */
+        .actions-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 22px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(21, 128, 61, 0.25);
+        }
+
+        .action-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(21, 128, 61, 0.35);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary-dark);
+            border: 2px solid #bbf7d0;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .btn-outline:hover {
+            background: #f0fdf4;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* RESULTS BOX */
+        #resBox {
+            display: none;
+            margin-top: 32px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .res-headline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .res-headline h3 {
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* METRIC CARDS */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: #86efac;
+        }
+
+        .summary-card.highlight {
+            border: 2px solid #86efac;
+            background: linear-gradient(to bottom, #ffffff, #f7fdf9);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+        }
+
+        .card-period-tag {
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .summary-card .kwh-value {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin: 6px 0 2px;
+            letter-spacing: -0.02em;
+        }
+
+        .summary-card .cost-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .summary-card .carbon-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.82rem;
+            color: #166534;
+            background: #dcfce7;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+        }
+
+        /* ECO IMPACT CALLOUT */
+        .eco-impact-box {
+            background: linear-gradient(135deg, #e8f9ef 0%, #d1fae5 100%);
+            border: 1px solid #86efac;
+            border-radius: var(--radius-md);
+            padding: 22px 26px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .eco-impact-content {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .eco-impact-icon {
+            font-size: 2.6rem;
+            background: white;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            flex-shrink: 0;
+        }
+
+        .eco-impact-text h4 {
+            font-size: 1.15rem;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .eco-impact-text p {
+            font-size: 0.95rem;
+            color: #14532d;
+            line-height: 1.55;
+            max-width: 620px;
+        }
+
+        .eco-stat-highlight {
+            font-weight: 800;
+            color: #064e3b;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .eco-saving-card {
+            background: white;
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid #a7f3d0;
+            text-align: right;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .eco-saving-card span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .eco-saving-card strong {
+            display: block;
+            font-size: 1.25rem;
+            color: var(--primary);
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        /* TIPS BOX */
+        .tips-accordion {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .tips-accordion h4 {
+            color: var(--primary-dark);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips-accordion ul {
+            padding-left: 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .tips-accordion li {
+            margin-bottom: 8px;
+        }
+
+        /* CHART CONTAINER */
+        .chart-section {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-top: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .chart-tabs {
+            display: inline-flex;
+            background: #eef7f1;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .chart-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .chart-btn:hover {
+            color: var(--primary);
+        }
+
+        .chart-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .metric-type-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .metric-pill {
+            padding: 6px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .metric-pill:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .metric-pill.active {
+            background: #e6f7ec;
+            color: var(--primary-dark);
+            border-color: var(--secondary);
+            font-weight: 800;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 360px;
+        }
+
+        /* VIEW 2: CART / HOUSEHOLD */
+        .cart-view {
+            display: none;
+        }
+
+        .cart-view.active {
+            display: block;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .cart-empty-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .cart-empty h3 {
+            color: var(--primary-dark);
+            font-size: 1.35rem;
+            margin-bottom: 8px;
+        }
+
+        .cart-content-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 24px;
+        }
+
+        .device-list-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .device-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        .device-table th {
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .device-table td {
+            padding: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .device-table tr:hover td {
+            background: #f8faf8;
+        }
+
+        .qty-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 6px;
+        }
+
+        .btn-qty {
+            background: white;
+            border: 1px solid #cbd5e1;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .btn-qty:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-remove {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            background: #fca5a5;
+        }
+
+        .cart-summary-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .total-bill-badge {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-radius: var(--radius-md);
+            padding: 22px;
+            text-align: center;
+        }
+
+        .total-bill-badge span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            display: block;
+        }
+
+        .total-bill-badge strong {
+            font-size: 2.3rem;
+            color: var(--primary-dark);
+            display: block;
+            margin: 6px 0;
+            font-weight: 800;
+        }
+
+        .donut-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* ENERGY SCORE BADGE */
+        .home-score-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .score-indicator {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        /* VIEW 3: TIER SIMULATOR */
+        .tier-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .tier-box {
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .tier-box.low-tier {
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+
+        .tier-box.high-tier {
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+
+        .tier-progress-wrapper {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .tier-progress-bar {
+            height: 16px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 14px 0 8px;
+            display: flex;
+        }
+
+        .tier-progress-fill-1 {
+            background: var(--primary-light);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .tier-progress-fill-2 {
+            background: #ef4444;
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.94); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h3 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0f172a;
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            z-index: 10000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: 48px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            border-top: 1px solid var(--border);
+            padding-top: 26px;
+        }
+
+        /* PRINT STYLING */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+            }
+            .nav-tabs, .tariff-bar, .actions-group, .btn-custom-device, .btn-remove, .btn-qty, .header-top-actions, .chart-controls-bar {
+                display: none !important;
+            }
+            .card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            #viewSingle, #viewCart {
+                display: block !important;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            .cart-content-grid {
+                grid-template-columns: 1fr;
+            }
+            .tier-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px 40px;
+            }
+            .header-title {
+                font-size: 1.7rem;
+            }
+            .card-body {
+                padding: 18px;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .actions-group {
+                grid-template-columns: 1fr;
+            }
+            .select-row {
+                flex-direction: column;
+            }
+            .btn-custom-device {
+                width: 100%;
+                justify-content: center;
+            }
+            .tariff-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .tariff-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .chart-tabs {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-controls-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .chart-container {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-top-actions">
+            <button class="btn-header-quick" onclick="loadSampleHousehold()">
+                <span>📦</span> Örnek 3+1 Ev Paketi Yükle
+            </button>
+            <button class="btn-header-quick" onclick="printReport()">
+                <span>🖨️</span> Rapor Yazdır / PDF
+            </button>
+        </div>
+
+        <div class="brand-badge">
+            <span class="pulse-dot"></span>
+            Eko-Enerji & Sürdürülebilirlik Platformu
+        </div>
+        <h1 class="header-title">
+            🌿 Doğa Dostu Enerji Analiz Paneli ⚡
+        </h1>
+        <p class="header-subtitle">
+            Evsel elektrikli aletlerinizin tüketimini, faturaya yansımasını, kademeli tarife payını ve doğaya bıraktığı karbon ayak izini hesaplayın; yeşil tasarruf adımları atın.
+        </p>
+    </header>
+
+    <!-- TARIFF & ELECTRICITY PRICE SETTINGS BAR -->
+    <div class="tariff-bar">
+        <div class="tariff-left">
+            <span class="tariff-tag">⚡ Elektrik Tarifesi</span>
+            <div class="tariff-type-selector">
+                <button id="tariffTypeSingle" class="tariff-type-btn active" onclick="setTariffMode('single')">Sabit Birim Fiyat</button>
+                <button id="tariffTypeTiered" class="tariff-type-btn" onclick="setTariffMode('tiered')">EPDK Kademeli Tarife</button>
+            </div>
+            <span id="tariffDesc" style="font-size:0.86rem; color:var(--text-muted);">
+                Birim elektrik fiyatınızı güncel faturanıza göre uyarlayabilirsiniz:
+            </span>
+        </div>
+        <div class="tariff-controls">
+            <div class="tariff-input-group" id="tariffInputWrapper">
+                <input type="number" id="tariffInput" class="tariff-input" value="2.60" step="0.05" min="0.1" onchange="updateTariff(this.value)">
+                <span>TL / kWh</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION TABS -->
+    <div class="nav-tabs">
+        <button class="nav-btn active" id="tabSingleBtn" onclick="switchMainTab('single')">
+            <span>⚡ Cihaz Detay Analizi</span>
+        </button>
+        <button class="nav-btn" id="tabCartBtn" onclick="switchMainTab('cart')">
+            <span>🏠 Evimdeki Cihazlar & Toplam Fatura</span>
+            <span class="tab-badge" id="cartCountBadge">0</span>
+        </button>
+        <button class="nav-btn" id="tabTierBtn" onclick="switchMainTab('tier')">
+            <span>📊 Kademeli Fatura & Tasarruf</span>
+        </button>
+        <button class="nav-btn" id="tabGuideBtn" onclick="switchMainTab('guide')">
+            <span>🌱 Tasarruf & Karbon Rehberi</span>
+        </button>
+    </div>
+
+    <!-- ==========================================
+         TAB 1: SINGLE DEVICE VIEW
+         ========================================== -->
+    <section id="viewSingle">
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>
+                    <span>🔍</span> Cihazınızı Seçin & İnce Ayarlayın
+                </h2>
+                <span class="eco-rating-badge" id="categoryBadge">
+                    Ev Tipi Tüketim
+                </span>
+            </div>
+
+            <div class="card-body">
+
+                <!-- SELECT DEVICE -->
+                <div class="device-selector-wrapper">
+                    <label for="deviceSelect">
+                        🔌 Analiz etmek istediğiniz cihazı belirleyin:
+                    </label>
+                    <div class="select-row">
+                        <select id="deviceSelect" class="custom-select" onchange="deviceSelected()">
+                            <option value="">-- Bir elektrikli cihaz seçin --</option>
+                            <optgroup label="❄️ Mutfak & Soğutma">
+                                <option value="fridge">🧊 Buzdolabı (No-Frost / Kombi)</option>
+                                <option value="freezer">📦 Derin Dondurucu</option>
+                                <option value="dishwasher">🍽️ Bulaşık Makinesi</option>
+                                <option value="airfryer">🍟 Sıcak Hava Fritözü (Airfryer)</option>
+                                <option value="oven">🔥 Elektrikli Ankastre Fırın</option>
+                                <option value="microwave">📻 Mikrodalga Fırın</option>
+                                <option value="kettle">☕ Su Isıtıcı (Kettle)</option>
+                                <option value="coffee">☕ Kahve Makinesi (Espresso/Filtre)</option>
+                                <option value="cooktop">🫓 İndüksiyonlu Ocak</option>
+                                <option value="toaster">🥪 Tost Makinesi</option>
+                            </optgroup>
+                            <optgroup label="🧺 Temizlik & Bakım">
+                                <option value="washing">🧺 Çamaşır Makinesi</option>
+                                <option value="dryer">💨 Kurutma Makinesi</option>
+                                <option value="iron">👔 Buharlı Ütü</option>
+                                <option value="vacuum">🧹 Elektrikli Süpürge</option>
+                                <option value="robotvac">🤖 Robot Süpürge</option>
+                                <option value="hairdryer">💇 Saç Kurutma Makinesi</option>
+                            </optgroup>
+                            <optgroup label="🌡️ İklimlendirme & Isınma & Su">
+                                <option value="airconditioner">❄️ İnverter Klima (12.000 BTU)</option>
+                                <option value="heater">♨️ Elektrikli Isıtıcı (UFO / Yağlı Radyatör)</option>
+                                <option value="waterheater">🚿 Termosifon / Elektrikli Şofben</option>
+                                <option value="fan">🌀 Ayaklı Vantilatör</option>
+                                <option value="combi">⚙️ Kombi Sirkülasyon Pompası</option>
+                            </optgroup>
+                            <optgroup label="💻 Eğlence, Bilişim & Aydınlatma">
+                                <option value="tv">📺 55" 4K Smart TV</option>
+                                <option value="computer">🖥️ Oyuncu Masaüstü Bilgisayarı</option>
+                                <option value="laptop">💻 Dizüstü Bilgisayar (Laptop)</option>
+                                <option value="console">🎮 Oyun Konsolu (PS5 / Xbox)</option>
+                                <option value="modem">📡 Wi-Fi Modem (7/24 Açık)</option>
+                                <option value="lamp">💡 LED Ampul (10W Tasarruflu)</option>
+                                <option value="oldlamp">💡 Klasik Akkor Ampul (60W)</option>
+                            </optgroup>
+                            <optgroup label="🚗 Yeni Nesil & Mobilite">
+                                <option value="evcharger">🚗 Elektrikli Araç Şarjı (7.4 kW Wallbox)</option>
+                                <option value="escooter">🛴 Elektrikli Scooter Şarjı</option>
+                            </optgroup>
+                        </select>
+                        <button class="btn-custom-device" onclick="openCustomModal()">
+                            ➕ Yeni / Özel Cihaz Ekle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DEVICE PARAMETER ADJUSTMENT PANEL -->
+                <div id="deviceAdjustPanel" class="device-adjust-panel">
+                    <div class="adjust-header">
+                        <div class="device-title-area">
+                            <h3 id="panelDeviceName">Cihaz Adı</h3>
+                            <p id="panelDeviceDesc">Açıklama ve kullanım standardı</p>
+                        </div>
+                        <span id="efficiencyBadge" class="eco-rating-badge">
+                            🌱 Standart Tüketim
+                        </span>
+                    </div>
+
+                    <div class="controls-grid">
+                        <!-- WATT -->
+                        <div class="control-item">
+                            <div class="control-label-row">
+                                <label for="inputWatt">⚡ Güç Tüketimi (Watt)</label>
+                                <span class="quick-badge" id="wattBadge">Watt</span>
+                            </div>
+                            <input type="number" id="inputWatt" min="1" max="15000" oninput="syncControl('watt')">
+                            <input type="range" id="rangeWatt" min="5" max="3500" step="5" oninput="syncRange('watt')">
+                        </div>
+
+                        <!-- HOURS -->
+                        <div class="control-item">
+                            <div class="control-label-row">
+                                <label for="inputHours">⏱️ Günlük Kullanım (Saat)</label>
+                                <span class="quick-badge" id="hoursBadge">Saat/Gün</span>
+                            </div>
+                            <input type="number" id="inputHours" min="0.1" max="24" step="0.1" oninput="syncControl('hours')">
+                            <input type="range" id="rangeHours" min="0.1" max="24" step="0.1" oninput="syncRange('hours')">
+                        </div>
+
+                        <!-- COUNT -->
+                        <div class="control-item">
+                            <div class="control-label-row">
+                                <label for="inputCount">🔌 Evdeki Cihaz Adedi</label>
+                                <span class="quick-badge" id="countBadge">Adet</span>
+                            </div>
+                            <input type="number" id="inputCount" min="1" max="50" value="1" oninput="syncControl('count')">
+                            <input type="range" id="rangeCount" min="1" max="10" step="1" value="1" oninput="syncRange('count')">
+                        </div>
+                    </div>
+
+                    <!-- ECO INVERTER TOGGLE -->
+                    <div class="eco-switch-bar" onclick="toggleEcoMode()">
+                        <div class="eco-switch-info">
+                            <span style="font-size:1.4rem;">🍃</span>
+                            <div>
+                                <strong>Yüksek Enerji Verimliliği (A+++ / Eko Tasarruf Modu)</strong>
+                                <div style="font-size:0.84rem; color:var(--text-muted);">
+                                    İnverter motor ve akıllı enerji yönetimi sayesinde ortalama %35 daha az tüketir.
+                                </div>
+                            </div>
+                        </div>
+                        <label class="switch" onclick="event.stopPropagation()">
+                            <input type="checkbox" id="ecoToggle" onchange="calculateDevice(false)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="actions-group">
+                        <button class="action-btn" onclick="calculateDevice(true)">
+                            <span>🌱 Tüketimi & Karbon Salınımını Hesapla</span>
+                        </button>
+                        <button class="action-btn btn-outline" onclick="addCurrentToCart()">
+                            <span>🏠 Ev Listeme Ekle</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CALCULATION RESULTS -->
+                <div id="resBox">
+                    
+                    <div class="res-headline">
+                        <h3>
+                            <span>📊</span> <span id="outName">Cihaz</span> Enerji & Karbon Raporu
+                        </h3>
+                        <button class="action-btn btn-outline" style="padding:8px 16px; font-size:0.86rem;" onclick="copySummaryText()">
+                            📋 Özeti Kopyala
+                        </button>
+                    </div>
+
+                    <!-- 4 PERIOD METRIC CARDS -->
+                    <div class="summary-grid">
+                        
+                        <!-- Günlük -->
+                        <div class="summary-card">
+                            <div class="card-period-tag">☀️ Günlük</div>
+                            <div class="kwh-value" id="dailyKwh">0.00 kWh</div>
+                            <div class="cost-value" id="dailyCost">₺0.00</div>
+                            <div class="carbon-badge">
+                                <span>🌿</span> <span id="dailyCarbon">0.00 kg CO₂</span>
+                            </div>
+                        </div>
+
+                        <!-- Haftalık -->
+                        <div class="summary-card">
+                            <div class="card-period-tag">📅 Haftalık (7 Gün)</div>
+                            <div class="kwh-value" id="weeklyKwh">0.00 kWh</div>
+                            <div class="cost-value" id="weeklyCost">₺0.00</div>
+                            <div class="carbon-badge">
+                                <span>🌿</span> <span id="weeklyCarbon">0.00 kg CO₂</span>
+                            </div>
+                        </div>
+
+                        <!-- Aylık -->
+                        <div class="summary-card highlight">
+                            <div class="card-period-tag" style="color:var(--primary);">🗓️ Aylık Fatura Payı</div>
+                            <div class="kwh-value" id="monthlyKwh" style="color:var(--primary);">0.00 kWh</div>
+                            <div class="cost-value" id="monthlyCost" style="font-size:1.35rem;">₺0.00</div>
+                            <div class="carbon-badge">
+                                <span>🌿</span> <span id="monthlyCarbon">0.00 kg CO₂</span>
+                            </div>
+                        </div>
+
+                        <!-- Yıllık -->
+                        <div class="summary-card">
+                            <div class="card-period-tag">📆 Yıllık Toplam</div>
+                            <div class="kwh-value" id="yearlyKwh">0.00 kWh</div>
+                            <div class="cost-value" id="yearlyCost">₺0.00</div>
+                            <div class="carbon-badge">
+                                <span>🌿</span> <span id="yearlyCarbon">0.00 kg CO₂</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ECO IMPACT HIGHLIGHT BOX -->
+                    <div class="eco-impact-box">
+                        <div class="eco-impact-content">
+                            <div class="eco-impact-icon">🌳</div>
+                            <div class="eco-impact-text">
+                                <h4>Doğa Etkisi & Karbon Telafisi</h4>
+                                <p>
+                                    Bu cihazın yıllık oluşturduğu <span class="eco-stat-highlight" id="ecoAnnualCo2">0 kg CO₂</span> salınımını atmosferden temizlemek için yılda yaklaşık <span class="eco-stat-highlight" id="ecoTreesCount">0 adet yetişkin ağacın</span> temizleme gücüne ihtiyaç vardır.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="eco-saving-card">
+                            <span>💡 Günde 1 saat tasarruf:</span>
+                            <strong id="ecoSavingHint">Yılda ₺0 tasarruf</strong>
+                        </div>
+                    </div>
+
+                    <!-- SMART ECO TIPS ACCORDION -->
+                    <div class="tips-accordion" id="deviceTipsBox">
+                        <h4>💡 Bu Cihaz İçin Uzman Yeşil Tasarruf Tavsiyeleri</h4>
+                        <ul id="deviceTipsList">
+                            <li>Cihazı bekleme (standby) modunda bırakmamak yıllık faturada %5-8 düşüş sağlar.</li>
+                        </ul>
+                    </div>
+
+                    <!-- CHART SECTION -->
+                    <div class="chart-section">
+                        <div class="chart-controls-bar">
+                            <div class="chart-tabs">
+                                <button id="dailyBtn" class="chart-btn active" onclick="changeChartPeriod('daily', this)">Günlük Yük</button>
+                                <button class="chart-btn" onclick="changeChartPeriod('weekly', this)">Haftalık</button>
+                                <button class="chart-btn" onclick="changeChartPeriod('monthly', this)">Aylık</button>
+                                <button class="chart-btn" onclick="changeChartPeriod('yearly', this)">Yıllık Eğilim</button>
+                            </div>
+
+                            <div class="metric-type-selector">
+                                <span>Görünüm:</span>
+                                <span class="metric-pill active" id="metricKwh" onclick="setChartMetric('kwh')">Tüketim (kWh)</span>
+                                <span class="metric-pill" id="metricCost" onclick="setChartMetric('cost')">Maliyet (₺)</span>
+                                <span class="metric-pill" id="metricCarbon" onclick="setChartMetric('carbon')">Karbon (kg CO₂)</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 2: HOUSEHOLD CART & TOTAL BILL
+         ========================================== -->
+    <section id="viewCart" class="cart-view">
+        
+        <div class="card">
+            <div class="card-header">
+                <h2><span>🏠</span> Evimdeki Cihazlar & Genel Fatura Dağılımı</h2>
+                <div style="display:flex; gap:8px;">
+                    <button class="action-btn btn-outline" style="padding:6px 14px; font-size:0.85rem;" onclick="loadSampleHousehold()">
+                        📦 Örnek Ev Yükle
+                    </button>
+                    <button class="action-btn btn-outline" style="padding:6px 14px; font-size:0.85rem; color:#dc2626; border-color:#fca5a5;" onclick="clearCart()">
+                        🗑️ Listeyi Temizle
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                
+                <div id="cartEmptyState" class="cart-empty">
+                    <div class="cart-empty-icon">🔌</div>
+                    <h3>Henüz listenize cihaz eklemediniz!</h3>
+                    <p style="max-width:550px; margin:0 auto 20px;">
+                        "Cihaz Detay Analizi" sekmesinden evinizdeki cihazları seçip "Ev Listeme Ekle" butonuna basarak tüm evinizin aylık faturasını, karbon ayak izini ve cihaz pasta grafiğini görebilirsiniz.
+                    </p>
+                    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                        <button class="action-btn" onclick="switchMainTab('single')">
+                            ⚡ İlk Cihazı Seç & Ekle
+                        </button>
+                        <button class="action-btn btn-outline" onclick="loadSampleHousehold()">
+                            📦 Standart 3+1 Ev Paketi Yükle
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cartFilledState" class="cart-content-grid" style="display:none;">
+                    
+                    <!-- TABLE -->
+                    <div class="device-list-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <h4 style="color:var(--primary-dark); font-size:1.1rem; font-weight:800;">
+                                Eklenen Cihazlar (<span id="cartCountTitle">0</span>)
+                            </h4>
+                            <button class="btn-header-quick" onclick="switchMainTab('single')">
+                                ➕ Cihaz Ekle
+                            </button>
+                        </div>
+
+                        <div style="overflow-x:auto;">
+                            <table class="device-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cihaz</th>
+                                        <th>Güç / Süre</th>
+                                        <th style="text-align:center;">Adet</th>
+                                        <th>Aylık kWh</th>
+                                        <th>Aylık Fatura</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartTableBody">
+                                    <!-- Dinamik satırlar -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TOTALS & DONUT -->
+                    <div class="cart-summary-box">
+                        <div class="total-bill-badge">
+                            <span>Tahmini Toplam Aylık Faturanız</span>
+                            <strong id="cartTotalCost">₺0.00</strong>
+                            <div style="font-size:0.95rem; color:var(--text-muted); font-weight:700;">
+                                Toplam: <span id="cartTotalKwh" style="color:var(--primary-dark);">0 kWh/ay</span>
+                            </div>
+                            <div style="margin-top:8px; font-size:0.85rem; color:#14532d;">
+                                🌿 Yıllık Karbon: <span id="cartTotalCo2" style="font-weight:800;">0 kg CO₂</span> (Yaklaşık <span id="cartTotalTrees" style="font-weight:800;">0</span> ağaç)
+                            </div>
+                        </div>
+
+                        <!-- HOME EFFICIENCY RATING CARD -->
+                        <div class="home-score-card">
+                            <div>
+                                <span style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">EV ENERJİ KARNESİ</span>
+                                <h5 id="homeScoreTitle" style="font-size:1rem; color:var(--primary-dark); font-weight:800;">A++ Eko-Verimli Ev</h5>
+                                <p id="homeScoreDesc" style="font-size:0.8rem; color:var(--text-muted);">Ortalama Türkiye hanesinden daha tasarruflu.</p>
+                            </div>
+                            <div class="score-indicator" id="homeScoreBadge" style="background:#15803d;">
+                                A++
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="font-size:0.98rem; margin-bottom:12px; color:var(--primary-dark); text-align:center; font-weight:700;">
+                                📊 Faturanın Cihazlara Göre Dağılımı
+                            </h4>
+                            <div class="donut-container">
+                                <canvas id="donutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 3: TIERED TARIFF & SIMULATOR
+         ========================================== -->
+    <section id="viewTier" class="cart-view">
+        <div class="card">
+            <div class="card-header">
+                <h2><span>📊</span> EPDK Kademeli Tarife Simülatörü & Tasarruf Fırsatı</h2>
+            </div>
+            <div class="card-body">
+                
+                <div class="tier-progress-wrapper">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div>
+                            <h4 style="color:var(--primary-dark); font-size:1.15rem; font-weight:800;">
+                                Aylık Tüketim & 240 kWh Eşiği Takibi
+                            </h4>
+                            <p style="font-size:0.88rem; color:var(--text-muted);">
+                                Türkiye EPDK regülasyonuna göre aylık 240 kWh (günde ortalama 8 kWh) altı düşük tarife, üstü ise yüksek tarife ile ücretlendirilir.
+                            </p>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">Mevcut Toplam:</span>
+                            <div style="font-size:1.4rem; font-weight:800; color:var(--primary-dark);" id="tierTotalKwhText">0 kWh</div>
+                        </div>
+                    </div>
+
+                    <div class="tier-progress-bar">
+                        <div id="tierBar1" class="tier-progress-fill-1" style="width: 0%;"></div>
+                        <div id="tierBar2" class="tier-progress-fill-2" style="width: 0%;"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700; color:var(--text-muted);">
+                        <span>0 kWh (Başlangıç)</span>
+                        <span style="color:var(--primary); font-weight:800;">📍 240 kWh Kademe Sınırı</span>
+                        <span id="tierMaxLabel">500+ kWh</span>
+                    </div>
+                </div>
+
+                <div class="tier-card-grid">
+                    <div class="tier-box low-tier">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span style="font-size:1.3rem;">🟢</span>
+                            <strong style="color:#14532d; font-size:1.05rem;">1. Kademe (Ekonomik Tüketim)</strong>
+                        </div>
+                        <p style="font-size:0.88rem; color:#166534; margin-bottom:12px;">
+                            240 kWh'a kadar olan tüketiminiz indirimli fiyattan faturalandırılır.
+                        </p>
+                        <div style="font-size:1.4rem; font-weight:800; color:#14532d;" id="lowTierAmount">
+                            0.00 kWh (₺0.00)
+                        </div>
+                        <div style="font-size:0.8rem; color:#166534; margin-top:4px;">
+                            Birim: ₺2.07 / kWh
+                        </div>
+                    </div>
+
+                    <div class="tier-box high-tier">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span style="font-size:1.3rem;">🔴</span>
+                            <strong style="color:#991b1b; font-size:1.05rem;">2. Kademe (Yüksek Tüketim)</strong>
+                        </div>
+                        <p style="font-size:0.88rem; color:#b91c1c; margin-bottom:12px;">
+                            240 kWh limitini aşan tüketiminiz yaklaşık %50 zamlı üst kademeden hesaplanır.
+                        </p>
+                        <div style="font-size:1.4rem; font-weight:800; color:#991b1b;" id="highTierAmount">
+                            0.00 kWh (₺0.00)
+                        </div>
+                        <div style="font-size:0.8rem; color:#b91c1c; margin-top:4px;">
+                            Birim: ₺3.11 / kWh
+                        </div>
+                    </div>
+                </div>
+
+                <div class="eco-impact-box" id="tierAdviceBox">
+                    <div class="eco-impact-content">
+                        <div class="eco-impact-icon">💡</div>
+                        <div class="eco-impact-text">
+                            <h4 id="tierAdviceTitle">Kademeli Fatura Tavsiyesi</h4>
+                            <p id="tierAdviceText">
+                                Evinizdeki cihaz listesini oluşturduğunuzda, kademenizi düşürüp tasarruf etmeniz için özel hesaplama burada görünecektir.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 4: GUIDE & ECO KNOWLEDGE
+         ========================================== -->
+    <section id="viewGuide" class="cart-view">
+        <div class="card">
+            <div class="card-header">
+                <h2><span>🌱</span> Evde Enerji Verimliliği & Yeşil Yaşam Kılavuzu</h2>
+            </div>
+            <div class="card-body" style="line-height:1.8; color:var(--text-main);">
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:22px;">
+                    
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>🧊</span> Buzdolabı & Soğutucular
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            Buzdolapları evde 7/24 aralıksız çalışan tek cihazdır. Sıcaklığı +4°C, dondurucuyu ise -18°C seviyesinde tutmak idealdir. Sıcak tencereleri asla doğrudan dolaba koymamak ve arkasındaki kondenser ızgarasını yılda 1 kez tozdan arındırmak %15-20 elektrik tasarrufu sağlar.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>🧺</span> Çamaşır & Bulaşık
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            Çamaşır ve bulaşık makinelerinin tükettiği enerjinin %85'i suyu ısıtmak için harcanır. Yıkamaları 30°C - 40°C veya Eko modda çalıştırmak yılda yüzlerce lira tasarruf sağlar ve kumaşların ömrünü uzatır.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>❄️</span> Klima & Isıtma
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            Yaz aylarında klimayı 24°C altına düşürmemek kritiktir; her 1 derecelik soğutma faturayı %7-10 artırır. İnverter motorlar kompresörü kapatıp açmak yerine devrini kısarak %40'a varan verim sağlar. Filtreleri ayda bir temizlemek hava akışını artırır.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>🔌</span> Gizli Vampir: Standby (Bekleme Modu)
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            Televizyon, konsol, modem ve şarj aletleri kapalıyken bile prizden akım çeker. Anahtarlı akıllı priz kullanarak bu gizli vampir tüketimi kesebilir, yıllık faturanızda %8'e varan tasarruf yakalayabilirsiniz.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>💡</span> LED Aydınlatma Devrimi
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            60 Watt akkor ampul yerine 9-10 Watt LED ampul takmak aynı aydınlatmayı %85 daha az elektrikle sunar. Evdeki 10 ampulün değişimi yılda yaklaşık 250-300 kWh tasarruf ettirir.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0fff4; border:1px solid #bbf7d0; border-radius:14px; padding:22px;">
+                        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <span>🌳</span> Karbon Ayak İzi Nasıl Hesaplanır?
+                        </h3>
+                        <p style="font-size:0.92rem; color:var(--text-muted);">
+                            Türkiye ulusal elektrik şebekesinde 1 kWh elektrik üretimi ortalama 0.44 kg CO₂ emisyonu üretir. 1 yetişkin ağaç ise yılda yaklaşık 22 kg CO₂ emer. Panelimiz bu bilimsel katsayıları baz almaktadır.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            🌿 <strong>Doğa Dostu Enerji Analiz & Tasarruf Paneli</strong> &bull; Sürdürülebilir Gelecek İçin Akıllı Çözümler
+        </p>
+        <p style="margin-top:4px; font-size:0.8rem; color:#64748b;">
+            Hesaplamalar Türkiye ortalama şebeke emisyon faktörü (0.44 kg CO₂/kWh) ve seçtiğiniz birim elektrik tarifesi baz alınarak yapılmaktadır.
+        </p>
+    </footer>
+
+</div>
+
+<!-- MODAL: ADD CUSTOM DEVICE -->
+<div class="modal-overlay" id="customDeviceModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>➕ Özel Cihaz Ekle</h3>
+            <button class="btn-close" onclick="closeCustomModal()">&times;</button>
+        </div>
+        <div class="form-group">
+            <label for="customName">Cihaz Adı & Simgesi</label>
+            <input type="text" id="customName" class="form-control" placeholder="Örn: 🎮 VR Başlık veya 🖨️ Yazıcı">
+        </div>
+        <div class="form-group">
+            <label for="customWatt">Güç Tüketimi (Watt)</label>
+            <input type="number" id="customWatt" class="form-control" placeholder="Örn: 150" min="1" max="15000">
+        </div>
+        <div class="form-group">
+            <label for="customHours">Günlük Kullanım Süresi (Saat)</label>
+            <input type="number" id="customHours" class="form-control" placeholder="Örn: 3" min="0.1" max="24" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="customCategory">Kategori</label>
+            <select id="customCategory" class="form-control">
+                <option value="Mutfak & Soğutma">❄️ Mutfak & Soğutma</option>
+                <option value="Temizlik & Bakım">🧺 Temizlik & Bakım</option>
+                <option value="İklimlendirme">🌡️ İklimlendirme & Isınma</option>
+                <option value="Bilişim & Eğlence">💻 Bilişim & Eğlence</option>
+                <option value="Aydınlatma">💡 Aydınlatma</option>
+                <option value="Diğer">🔌 Diğer</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="customDesc">Kısa Açıklama (İsteğe bağlı)</label>
+            <input type="text" id="customDesc" class="form-control" placeholder="Kişisel cihazım">
+        </div>
+        <button class="action-btn" style="width:100%; margin-top:14px;" onclick="saveCustomDevice()">
+            💾 Cihazı Listeye Ekle & Seç
+        </button>
+    </div>
+</div>
+
+<!-- TOAST MESSAGE -->
+<div class="toast" id="toastMessage">
+    <span id="toastIcon">✅</span>
+    <span id="toastText">İşlem başarılı!</span>
+</div>
+
+<script>
+    /*
+    ============================================================
+    TEMEL VERİLER VE CİHAZ KATALOĞU
+    ============================================================
+    */
+    const CO2_FACTOR = 0.44; // kg CO2 per kWh (Türkiye Şebeke Ort.)
+    const TREE_CO2_YEAR = 22.0; // 1 yetişkin ağacın yılda emdiği ortalama CO2 (kg)
+
+    let electricityPrice = 2.60; // Varsayılan TL / kWh
+    let tariffMode = 'single'; // 'single' | 'tiered'
+    const TIER1_LIMIT_MONTH = 240; // kWh/ay EPDK kademe sınırı
+    const TIER1_PRICE = 2.07; // ₺/kWh
+    const TIER2_PRICE = 3.11; // ₺/kWh
+
+    const defaultDevices = {
+        fridge: {
+            name: "🧊 Buzdolabı (No-Frost / Kombi)",
+            category: "Mutfak & Soğutma",
+            watt: 130,
+            hours: 24,
+            description: "A+ / No-Frost buzdolabı aralıklı termostat döngüsüyle 24 saat çalışır.",
+            tips: [
+                "Dolap sıcaklığını +4°C, derin dondurucuyu -18°C seviyesinde tutun.",
+                "Sıcak tencereleri asla soğumadan dolaba koymayın.",
+                "Dolabın arkasındaki kondenser ızgarasını yılda 1 kez tozdan arındırın."
+            ]
+        },
+        freezer: {
+            name: "📦 Derin Dondurucu",
+            category: "Mutfak & Soğutma",
+            watt: 140,
+            hours: 24,
+            description: "Yiyecekleri uzun süreli koruyan dikey veya sandık tipi dondurucu.",
+            tips: [
+                "Karlanma 5 mm'yi aştığında mutlaka buz çözme işlemi yapın.",
+                "Kapağını gereksiz yere uzun süre açık bırakmayın."
+            ]
+        },
+        dishwasher: {
+            name: "🍽️ Bulaşık Makinesi",
+            category: "Mutfak & Soğutma",
+            watt: 1200,
+            hours: 1.2,
+            description: "Günde yaklaşık 1 program yıkama üzerinden hesaplanır.",
+            tips: [
+                "Mümkün olduğunca 50°C Eko modunu tercih edin.",
+                "Tam dolmadan çalıştırmayın, elde yıkamaya göre %80 su ve enerji tasarrufu sağlar."
+            ]
+        },
+        airfryer: {
+            name: "🍟 Sıcak Hava Fritözü (Airfryer)",
+            category: "Mutfak & Soğutma",
+            watt: 1800,
+            hours: 0.5,
+            description: "Hızlı sıcak hava sirkülasyonu ile pişirme (Günde ortalama 30 dk).",
+            tips: [
+                "Büyük fırını ısıtmak yerine küçük porsiyonlarda Airfryer kullanmak %50 enerji tasarrufu sağlar.",
+                "Hazneyi aşırı doldurmamak pişirme süresini kısaltır."
+            ]
+        },
+        oven: {
+            name: "🔥 Elektrikli Ankastre Fırın",
+            category: "Mutfak & Soğutma",
+            watt: 2400,
+            hours: 0.8,
+            description: "Günde ortalama 45-50 dakika fırın kullanımı.",
+            tips: [
+                "Pişirme esnasında fırın kapağını sık sık açmayın (her açılışta 25°C ısı kaybolur).",
+                "Pişirme süresinin bitimine 5-10 dakika kala fırını kapatıp iç ısıdan yararlanın."
+            ]
+        },
+        microwave: {
+            name: "📻 Mikrodalga Fırın",
+            category: "Mutfak & Soğutma",
+            watt: 1100,
+            hours: 0.3,
+            description: "Hızlı ısıtma ve çözdürme için günlük yaklaşık 18 dakika.",
+            tips: [
+                "Küçük porsiyonları büyük fırın yerine mikrodalgada ısıtmak %60 daha az elektrik harcar."
+            ]
+        },
+        kettle: {
+            name: "☕ Su Isıtıcı (Kettle)",
+            category: "Mutfak & Soğutma",
+            watt: 2000,
+            hours: 0.3,
+            description: "Günde yaklaşık 4-5 kez çay/kahve suyu kaynatma.",
+            tips: [
+                "Yalnızca ihtiyacınız kadar su kaynatın; fazla su ısıtmak enerjiyi boşa harcar.",
+                "Tabandaki kireçleri düzenli olarak limon tuzu veya sirke ile temizleyin."
+            ]
+        },
+        coffee: {
+            name: "☕ Kahve Makinesi (Espresso/Filtre)",
+            category: "Mutfak & Soğutma",
+            watt: 1100,
+            hours: 0.25,
+            description: "Filtre veya kapsüllü kahve hazırlama süreci.",
+            tips: [
+                "Sıcak tutma tablasını uzun süre açık bırakmak yerine kahveyi termosa aktarın."
+            ]
+        },
+        cooktop: {
+            name: "🫓 İndüksiyonlu Ocak",
+            category: "Mutfak & Soğutma",
+            watt: 1800,
+            hours: 0.8,
+            description: "Manyetik alanla tencereyi doğrudan ısıtan modern ocak.",
+            tips: [
+                "İndüksiyonlu ocaklar klasik elektrikli ocaklara göre %40 daha verimlidir.",
+                "Tencere tabanının ocak halkasıyla tam örtüşmesine dikkat edin."
+            ]
+        },
+        toaster: {
+            name: "🥪 Tost Makinesi",
+            category: "Mutfak & Soğutma",
+            watt: 1600,
+            hours: 0.25,
+            description: "Kahvaltılarda tost ve ızgara hazırlama.",
+            tips: [
+                "Plakalar tam ısındıktan sonra pişirin ve işlem biter bitmez fişini çekin."
+            ]
+        },
+        washing: {
+            name: "🧺 Çamaşır Makinesi",
+            category: "Temizlik & Bakım",
+            watt: 1000,
+            hours: 1.2,
+            description: "Haftada yaklaşık 6-7 yıkama standart ev ortalaması.",
+            tips: [
+                "Çamaşırları 60°C yerine 30-40°C derecede yıkamak elektrik tüketimini yarıya indirir.",
+                "Eko programları tercih edin ve tamburu kapasitesine uygun doldurun."
+            ]
+        },
+        dryer: {
+            name: "💨 Kurutma Makinesi",
+            category: "Temizlik & Bakım",
+            watt: 1600,
+            hours: 1.2,
+            description: "Isı pompalı veya rezistanslı çamaşır kurutucu.",
+            tips: [
+                "Çamaşırları makineye atmadan önce çamaşır makinesinde yüksek devirde sıktırın.",
+                "Her kurutmadan sonra hava ve tiftik filtresini mutlaka temizleyin."
+            ]
+        },
+        iron: {
+            name: "👔 Buharlı Ütü",
+            category: "Temizlik & Bakım",
+            watt: 2200,
+            hours: 0.5,
+            description: "Günde ortalama 30 dakika buharlı ütü kullanımı.",
+            tips: [
+                "Ütüleyeceğiniz giysileri biriktirip tek seferde ütüleyin.",
+                "Ütülemeyi bitirmeden 5 dakika önce fişi çekip tabanın kalan ısısını kullanın."
+            ]
+        },
+        vacuum: {
+            name: "🧹 Elektrikli Süpürge",
+            category: "Temizlik & Bakım",
+            watt: 1400,
+            hours: 0.4,
+            description: "Günde yaklaşık 20-25 dakika temizlik.",
+            tips: [
+                "Toz torbasını veya haznesini dolmadan boşaltın; dolu hazne motoru zorlar."
+            ]
+        },
+        robotvac: {
+            name: "🤖 Robot Süpürge",
+            category: "Temizlik & Bakım",
+            watt: 45,
+            hours: 2.5,
+            description: "Otomatik temizlik ve şarj istasyonu bekleme tüketimi.",
+            tips: [
+                "Fırçalarına dolanan saçları düzenli temizleyerek motor yükünü azaltın."
+            ]
+        },
+        hairdryer: {
+            name: "💇 Saç Kurutma Makinesi",
+            category: "Temizlik & Bakım",
+            watt: 1800,
+            hours: 0.25,
+            description: "Günde yaklaşık 15 dakika yüksek ısıda kurutma.",
+            tips: [
+                "Saçınızın nemini önce havluyla iyice alın, kurutma süresini kısaltın."
+            ]
+        },
+        airconditioner: {
+            name: "❄️ İnverter Klima (12.000 BTU)",
+            category: "İklimlendirme",
+            watt: 1100,
+            hours: 6,
+            description: "Yaz/kış iklimlendirme, inverter enerji optimizasyonlu.",
+            tips: [
+                "Yazın ideal konfor derecesi 24°C'dir. Her 1 derece daha soğuk %7 daha fazla elektrik yakar.",
+                "Klimanız açıkken oda kapı ve pencerelerini kapalı tutun.",
+                "Hava filtrelerini en az ayda bir yıkayın."
+            ]
+        },
+        heater: {
+            name: "♨️ Elektrikli Isıtıcı (UFO / Yağlı Radyatör)",
+            category: "İklimlendirme",
+            watt: 2000,
+            hours: 5,
+            description: "Kızılötesi veya yağlı radyatör ısıtıcı.",
+            tips: [
+                "Oda yalıtımı sağlayarak kapı altı rüzgarlıklarını kullanın.",
+                "Termostatlı modeller kullanarak ortam ısınınca otomatik kapanmasını sağlayın."
+            ]
+        },
+        waterheater: {
+            name: "🚿 Termosifon / Elektrikli Şofben",
+            category: "İklimlendirme",
+            watt: 2000,
+            hours: 3,
+            description: "Sıcak su depolama termosifonu (65 Litre).",
+            tips: [
+                "Sıcaklık ayarını 50-55°C üzerine çıkarmayın, kireçlenmeyi ve ısı kaybını önler.",
+                "Tasarruflu duş başlığı kullanarak sıcak su tüketimini %40 azaltın."
+            ]
+        },
+        fan: {
+            name: "🌀 Ayaklı Vantilatör",
+            category: "İklimlendirme",
+            watt: 55,
+            hours: 8,
+            description: "Hava sirkülasyonu sağlayan düşük tüketimli serinletici.",
+            tips: [
+                "Klimaya alternatif olarak vantilatör kullanmak %90'a varan elektrik tasarrufu sağlar."
+            ]
+        },
+        combi: {
+            name: "⚙️ Kombi Sirkülasyon Pompası",
+            category: "İklimlendirme",
+            watt: 110,
+            hours: 12,
+            description: "Doğalgaz kombisinin kış aylarında su devridaim elektrik harcaması.",
+            tips: [
+                "Oda termostatı takarak kombinin gereksiz yere sürekli pompa çalıştırmasını önleyin."
+            ]
+        },
+        tv: {
+            name: "📺 55\" 4K Smart TV",
+            category: "Bilişim & Eğlence",
+            watt: 100,
+            hours: 5,
+            description: "Günlük yaklaşık 5 saat TV seyretme süresi.",
+            tips: [
+                "Gereksiz yere arkada açık bırakmayın, 'Ekranı Kapat' ses modunu kullanın.",
+                "Parlaklığı ortam ışığına göre otomatik ayarlayan Eko Sensörü aktif edin."
+            ]
+        },
+        computer: {
+            name: "🖥️ Oyuncu Masaüstü Bilgisayarı",
+            category: "Bilişim & Eğlence",
+            watt: 400,
+            hours: 5,
+            description: "Yüksek performanslı işlemci ve harici ekran kartlı PC.",
+            tips: [
+                "Bilgisayar başında değilken 'Uyku Modu'na geçmesini sağlayın.",
+                "Kullanmadığınız harici USB aygıtlarını prizden veya porttan çıkarın."
+            ]
+        },
+        laptop: {
+            name: "💻 Dizüstü Bilgisayar (Laptop)",
+            category: "Bilişim & Eğlence",
+            watt: 65,
+            hours: 7,
+            description: "İş veya ders için günlük ortalama 7 saat kullanım.",
+            tips: [
+                "Pil dolduktan sonra uzun süre şarjda bırakmamak pil ömrünü korur.",
+                "Ekran parlaklığını dengeli seviyede tutun."
+            ]
+        },
+        console: {
+            name: "🎮 Oyun Konsolu (PS5 / Xbox)",
+            category: "Bilişim & Eğlence",
+            watt: 200,
+            hours: 3,
+            description: "Aktif oyun oynama ve bekleme süreci.",
+            tips: [
+                "Cihazı tamamen kapatmak yerine hızlı başlatma yerine gerçek enerji tasarruflu kapatma seçin."
+            ]
+        },
+        modem: {
+            name: "📡 Wi-Fi Modem (7/24 Açık)",
+            category: "Bilişim & Eğlence",
+            watt: 15,
+            hours: 24,
+            description: "Ev interneti için kesintisiz 24 saat çalışan modem/router.",
+            tips: [
+                "Uzun süreli tatillerde modemi fişten çekmek hem güvenlik hem elektrik tasarrufu sağlar."
+            ]
+        },
+        lamp: {
+            name: "💡 LED Ampul (10W Tasarruflu)",
+            category: "Aydınlatma",
+            watt: 10,
+            hours: 6,
+            description: "Eski tip 60W akkor ampul yerine modern 10W LED.",
+            tips: [
+                "Akkor ampulleri LED ile değiştirmek %85 elektrik tasarrufu sağlar."
+            ]
+        },
+        oldlamp: {
+            name: "💡 Klasik Akkor Ampul (60W)",
+            category: "Aydınlatma",
+            watt: 60,
+            hours: 6,
+            description: "Eski nesil sarı akkor flamanlı ampul.",
+            tips: [
+                "Bu ampulü derhal 9-10W LED ile değiştirerek yılda 110 kWh tasarruf edin!"
+            ]
+        },
+        evcharger: {
+            name: "🚗 Elektrikli Araç Şarjı (7.4 kW Wallbox)",
+            category: "Yeni Nesil & Mobilite",
+            watt: 7400,
+            hours: 3.5,
+            description: "Ev tipi AC duvar şarj istasyonu ile günlük araç batarya dolumu.",
+            tips: [
+                "3 zamanlı tarife kullanarak aracınızı gece 22:00 - 06:00 arasında %50 daha ucuz şarj edin."
+            ]
+        },
+        escooter: {
+            name: "🛴 Elektrikli Scooter Şarjı",
+            category: "Yeni Nesil & Mobilite",
+            watt: 80,
+            hours: 4,
+            description: "Şehir içi elektrikli scooter batarya şarjı.",
+            tips: [
+                "Batarya dolduğunda şarj aletini prizden çekin."
+            ]
+        }
+    };
+
+    // State Variables
+    let devices = { ...defaultDevices };
+    let selectedDeviceKey = null;
+    let selectedDeviceObj = null;
+    let currentCalc = null;
+    let chartInstance = null;
+    let donutInstance = null;
+    let currentPeriod = 'daily';
+    let currentMetric = 'kwh'; // 'kwh' | 'cost' | 'carbon'
+
+    // Ev Sepeti / Listesi
+    let cart = [];
+
+    // INIT
+    window.addEventListener("DOMContentLoaded", () => {
+        loadCustomDevices();
+        loadCartFromStorage();
+        updateCartBadge();
+
+        // Eğer kayıtlı cihaz yoksa örnek göstermek için varsayılan olarak buzdolabını seç
+        const select = document.getElementById("deviceSelect");
+        if (select && select.options.length > 1) {
+            select.value = "fridge";
+            deviceSelected();
+        }
+    });
+
+    /*
+    ============================================================
+    TARİFE & AYARLAR
+    ============================================================
+    */
+    function setTariffMode(mode) {
+        tariffMode = mode;
+        const btnSingle = document.getElementById("tariffTypeSingle");
+        const btnTiered = document.getElementById("tariffTypeTiered");
+        const desc = document.getElementById("tariffDesc");
+        const wrapper = document.getElementById("tariffInputWrapper");
+
+        if (mode === 'single') {
+            btnSingle.classList.add("active");
+            btnTiered.classList.remove("active");
+            wrapper.style.display = "flex";
+            desc.innerHTML = `Birim elektrik fiyatınızı güncel faturanıza göre uyarlayabilirsiniz:`;
+            showToast(`Sabit tarife seçildi: ₺${electricityPrice.toFixed(2)}/kWh`);
+        } else {
+            btnTiered.classList.add("active");
+            btnSingle.classList.remove("active");
+            wrapper.style.display = "none";
+            desc.innerHTML = `EPDK Kademeli Standart: <strong>İlk 240 kWh: ₺${TIER1_PRICE}/kWh</strong>, <strong>Üzeri: ₺${TIER2_PRICE}/kWh</strong>`;
+            showToast(`EPDK Kademeli Tarife aktif edildi.`);
+        }
+
+        if (selectedDeviceKey) {
+            calculateDevice(false);
+        }
+        if (cart.length > 0) {
+            renderCart();
+            renderTierAnalysis();
+        }
+    }
+
+    function updateTariff(val) {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && parsed > 0) {
+            electricityPrice = parsed;
+            showToast(`Birim elektrik fiyatı ₺${parsed.toFixed(2)}/kWh olarak güncellendi.`);
+            if (selectedDeviceKey) {
+                calculateDevice(false);
+            }
+            if (cart.length > 0) {
+                renderCart();
+            }
+        }
+    }
+
+    function calculateCostForKwh(kwhMonthly) {
+        if (tariffMode === 'single') {
+            return kwhMonthly * electricityPrice;
+        } else {
+            // EPDK Kademeli Tarife
+            if (kwhMonthly <= TIER1_LIMIT_MONTH) {
+                return kwhMonthly * TIER1_PRICE;
+            } else {
+                const low = TIER1_LIMIT_MONTH * TIER1_PRICE;
+                const high = (kwhMonthly - TIER1_LIMIT_MONTH) * TIER2_PRICE;
+                return low + high;
+            }
+        }
+    }
+
+    /*
+    ============================================================
+    SEKMELER ARASI GEÇİŞ
+    ============================================================
+    */
+    function switchMainTab(tab) {
+        const tabs = ['single', 'cart', 'tier', 'guide'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab' + capitalize(t) + 'Btn');
+            const view = document.getElementById('view' + capitalize(t));
+            if (btn) btn.classList.remove("active");
+            if (view) {
+                view.classList.remove("active");
+                view.style.display = "none";
+            }
+        });
+
+        const activeBtn = document.getElementById('tab' + capitalize(tab) + 'Btn');
+        const activeView = document.getElementById('view' + capitalize(tab));
+        
+        if (activeBtn) activeBtn.classList.add("active");
+        if (activeView) {
+            activeView.classList.add("active");
+            activeView.style.display = "block";
+        }
+
+        if (tab === 'single' && chartInstance) {
+            setTimeout(() => { chartInstance.resize(); }, 150);
+        } else if (tab === 'cart') {
+            renderCart();
+            if (donutInstance) {
+                setTimeout(() => { donutInstance.resize(); }, 150);
+            }
+        } else if (tab === 'tier') {
+            renderTierAnalysis();
+        }
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    /*
+    ============================================================
+    CİHAZ SEÇİMİ & PARAMETRE SENKRONİZASYONU
+    ============================================================
+    */
+    function deviceSelected() {
+        const select = document.getElementById("deviceSelect");
+        const key = select.value;
+        if (!key || !devices[key]) {
+            document.getElementById("deviceAdjustPanel").classList.remove("show");
+            document.getElementById("resBox").style.display = "none";
+            selectedDeviceKey = null;
+            return;
+        }
+
+        selectedDeviceKey = key;
+        selectedDeviceObj = devices[key];
+
+        // Panel bilgilerini doldur
+        document.getElementById("panelDeviceName").innerText = selectedDeviceObj.name;
+        document.getElementById("panelDeviceDesc").innerText = selectedDeviceObj.description;
+        document.getElementById("categoryBadge").innerText = selectedDeviceObj.category;
+
+        // Kontrolleri yükle
+        document.getElementById("inputWatt").value = selectedDeviceObj.watt;
+        document.getElementById("rangeWatt").value = Math.min(selectedDeviceObj.watt, 3500);
+
+        document.getElementById("inputHours").value = selectedDeviceObj.hours;
+        document.getElementById("rangeHours").value = selectedDeviceObj.hours;
+
+        document.getElementById("inputCount").value = 1;
+        document.getElementById("rangeCount").value = 1;
+
+        document.getElementById("ecoToggle").checked = false;
+
+        document.getElementById("deviceAdjustPanel").classList.add("show");
+
+        calculateDevice(false);
+    }
+
+    function syncControl(type) {
+        if (type === 'watt') {
+            const val = parseFloat(document.getElementById("inputWatt").value) || 0;
+            document.getElementById("rangeWatt").value = Math.min(val, 3500);
+        } else if (type === 'hours') {
+            const val = parseFloat(document.getElementById("inputHours").value) || 0;
+            document.getElementById("rangeHours").value = Math.min(Math.max(val, 0.1), 24);
+        } else if (type === 'count') {
+            const val = parseInt(document.getElementById("inputCount").value) || 1;
+            document.getElementById("rangeCount").value = Math.min(Math.max(val, 1), 10);
+        }
+        calculateDevice(false);
+    }
+
+    function syncRange(type) {
+        if (type === 'watt') {
+            const val = document.getElementById("rangeWatt").value;
+            document.getElementById("inputWatt").value = val;
+        } else if (type === 'hours') {
+            const val = document.getElementById("rangeHours").value;
+            document.getElementById("inputHours").value = val;
+        } else if (type === 'count') {
+            const val = document.getElementById("rangeCount").value;
+            document.getElementById("inputCount").value = val;
+        }
+        calculateDevice(false);
+    }
+
+    function toggleEcoMode() {
+        const toggle = document.getElementById("ecoToggle");
+        toggle.checked = !toggle.checked;
+        calculateDevice(false);
+    }
+
+    /*
+    ============================================================
+    HESAPLAMA MOTORU (ENGINE)
+    ============================================================
+    */
+    function calculateDevice(scrollIntoView) {
+        if (!selectedDeviceKey) return;
+
+        const watt = parseFloat(document.getElementById("inputWatt").value) || 0;
+        const hours = parseFloat(document.getElementById("inputHours").value) || 0;
+        const count = parseInt(document.getElementById("inputCount").value) || 1;
+        const isEco = document.getElementById("ecoToggle").checked;
+
+        // Eko modu %35 tasarruf katsayısı
+        const ecoMultiplier = isEco ? 0.65 : 1.0;
+
+        // Günlük Tüketim (kWh)
+        const dailyKwh = ((watt * hours * count) / 1000) * ecoMultiplier;
+        const weeklyKwh = dailyKwh * 7;
+        const monthlyKwh = dailyKwh * 30;
+        const yearlyKwh = dailyKwh * 365;
+
+        // Maliyetler (TL)
+        let dailyCost, weeklyCost, monthlyCost, yearlyCost;
+        if (tariffMode === 'single') {
+            dailyCost = dailyKwh * electricityPrice;
+            weeklyCost = weeklyKwh * electricityPrice;
+            monthlyCost = monthlyKwh * electricityPrice;
+            yearlyCost = yearlyKwh * electricityPrice;
+        } else {
+            // Kademeli tarife hesaplaması (aylık referans)
+            monthlyCost = calculateCostForKwh(monthlyKwh);
+            dailyCost = monthlyCost / 30;
+            weeklyCost = dailyCost * 7;
+            yearlyCost = monthlyCost * 12;
+        }
+
+        // Karbon Emisyonları (kg CO2)
+        const dailyCarbon = dailyKwh * CO2_FACTOR;
+        const weeklyCarbon = weeklyKwh * CO2_FACTOR;
+        const monthlyCarbon = monthlyKwh * CO2_FACTOR;
+        const yearlyCarbon = yearlyKwh * CO2_FACTOR;
+
+        // Ağaç Telafisi
+        const treesCount = (yearlyCarbon / TREE_CO2_YEAR).toFixed(1);
+
+        // 1 Saat Tasarruf İpucu
+        const oneHourDailySavingKwh = ((watt * 1 * count) / 1000) * ecoMultiplier;
+        const oneYearSavingTl = (oneHourDailySavingKwh * 365) * (tariffMode === 'single' ? electricityPrice : TIER1_PRICE);
+
+        // State kaydı
+        currentCalc = {
+            deviceKey: selectedDeviceKey,
+            name: selectedDeviceObj.name,
+            watt,
+            hours,
+            count,
+            isEco,
+            dailyKwh,
+            weeklyKwh,
+            monthlyKwh,
+            yearlyKwh,
+            dailyCost,
+            weeklyCost,
+            monthlyCost,
+            yearlyCost,
+            dailyCarbon,
+            weeklyCarbon,
+            monthlyCarbon,
+            yearlyCarbon,
+            treesCount
+        };
+
+        // DOM Güncelle
+        document.getElementById("outName").innerText = selectedDeviceObj.name;
+
+        document.getElementById("dailyKwh").innerText = dailyKwh.toFixed(2) + " kWh";
+        document.getElementById("dailyCost").innerText = "₺" + dailyCost.toFixed(2);
+        document.getElementById("dailyCarbon").innerText = dailyCarbon.toFixed(2) + " kg CO₂";
+
+        document.getElementById("weeklyKwh").innerText = weeklyKwh.toFixed(2) + " kWh";
+        document.getElementById("weeklyCost").innerText = "₺" + weeklyCost.toFixed(2);
+        document.getElementById("weeklyCarbon").innerText = weeklyCarbon.toFixed(2) + " kg CO₂";
+
+        document.getElementById("monthlyKwh").innerText = monthlyKwh.toFixed(2) + " kWh";
+        document.getElementById("monthlyCost").innerText = "₺" + monthlyCost.toFixed(2);
+        document.getElementById("monthlyCarbon").innerText = monthlyCarbon.toFixed(2) + " kg CO₂";
+
+        document.getElementById("yearlyKwh").innerText = yearlyKwh.toFixed(1) + " kWh";
+        document.getElementById("yearlyCost").innerText = "₺" + yearlyCost.toFixed(0);
+        document.getElementById("yearlyCarbon").innerText = yearlyCarbon.toFixed(1) + " kg CO₂";
+
+        document.getElementById("ecoAnnualCo2").innerText = yearlyCarbon.toFixed(1) + " kg CO₂";
+        document.getElementById("ecoTreesCount").innerText = treesCount + " adet ağaç";
+        document.getElementById("ecoSavingHint").innerText = `Yılda ₺${oneYearSavingTl.toFixed(0)} tasarruf`;
+
+        // İpuçlarını Güncelle
+        const tipsList = document.getElementById("deviceTipsList");
+        tipsList.innerHTML = "";
+        const customTips = selectedDeviceObj.tips || [
+            "Cihazı bekleme (standby) modunda bırakmamak yıllık faturada %5-8 düşüş sağlar.",
+            "Kullanmadığınız zamanlarda fişi çekerek vampir enerji tüketimini engelleyin."
+        ];
+        customTips.forEach(tip => {
+            const li = document.createElement("li");
+            li.innerText = tip;
+            tipsList.appendChild(li);
+        });
+
+        // Verimlilik etiketi güncelle
+        const effBadge = document.getElementById("efficiencyBadge");
+        if (isEco) {
+            effBadge.innerText = "🍃 A+++ Eko Tasarruf Aktif (%35 Verimli)";
+            effBadge.style.background = "#dcfce7";
+            effBadge.style.color = "#14532d";
+        } else if (watt > 2000) {
+            effBadge.innerText = "⚡ Yüksek Güç Tüketimi";
+            effBadge.style.background = "#fef3c7";
+            effBadge.style.color = "#92400e";
+        } else {
+            effBadge.innerText = "🌱 Standart Tüketim";
+            effBadge.style.background = "#e0f2fe";
+            effBadge.style.color = "#0369a1";
+        }
+
+        // Sonuç kutusunu göster
+        const resBox = document.getElementById("resBox");
+        resBox.style.display = "block";
+
+        if (scrollIntoView) {
+            resBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Grafiği güncelle
+        updateDeviceChart();
+    }
+
+    /*
+    ============================================================
+    GRAFİK YÖNETİMİ (CHART.JS + CANVAS FALLBACK)
+    ============================================================
+    */
+    function changeChartPeriod(period, btn) {
+        currentPeriod = period;
+        const buttons = btn.parentElement.querySelectorAll(".chart-btn");
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        updateDeviceChart();
+    }
+
+    function setChartMetric(metric) {
+        currentMetric = metric;
+        document.getElementById("metricKwh").classList.remove("active");
+        document.getElementById("metricCost").classList.remove("active");
+        document.getElementById("metricCarbon").classList.remove("active");
+
+        if (metric === 'kwh') document.getElementById("metricKwh").classList.add("active");
+        else if (metric === 'cost') document.getElementById("metricCost").classList.add("active");
+        else if (metric === 'carbon') document.getElementById("metricCarbon").classList.add("active");
+
+        updateDeviceChart();
+    }
+
+    function updateDeviceChart() {
+        if (!currentCalc) return;
+        const canvas = document.getElementById("myChart");
+        if (!canvas) return;
+
+        let labels = [];
+        let data = [];
+        let datasetLabel = "";
+        let color = "#15803d";
+        let bgColor = "rgba(21, 128, 61, 0.15)";
+
+        // Metrik birimi ve etiketi
+        let unit = "kWh";
+        let multiplier = 1;
+        if (currentMetric === 'kwh') {
+            unit = "kWh";
+            datasetLabel = "Tüketim (kWh)";
+            color = "#15803d";
+            bgColor = "rgba(21, 128, 61, 0.18)";
+        } else if (currentMetric === 'cost') {
+            unit = "₺";
+            datasetLabel = "Maliyet (₺)";
+            color = "#059669";
+            bgColor = "rgba(5, 150, 105, 0.18)";
+        } else if (currentMetric === 'carbon') {
+            unit = "kg CO₂";
+            datasetLabel = "Karbon Salınımı (kg CO₂)";
+            color = "#047857";
+            bgColor = "rgba(4, 120, 87, 0.18)";
+        }
+
+        // Periyot Dağılımı Simülasyonu
+        if (currentPeriod === 'daily') {
+            // 24 Saatlik dağılım simülasyonu
+            labels = ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"];
+            const baseValue = currentMetric === 'kwh' ? currentCalc.dailyKwh : (currentMetric === 'cost' ? currentCalc.dailyCost : currentCalc.dailyCarbon);
+            // Günün saatlerine göre gerçekçi ağırlık dağılımı
+            const weights = [0.05, 0.03, 0.08, 0.14, 0.16, 0.18, 0.22, 0.14];
+            data = weights.map(w => +(baseValue * w * (8/1)).toFixed(2));
+        } else if (currentPeriod === 'weekly') {
+            labels = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+            const dayVal = currentMetric === 'kwh' ? currentCalc.dailyKwh : (currentMetric === 'cost' ? currentCalc.dailyCost : currentCalc.dailyCarbon);
+            // Hafta sonu kullanım biraz artar
+            data = [dayVal * 0.95, dayVal * 0.95, dayVal * 0.98, dayVal * 1.0, dayVal * 1.05, dayVal * 1.15, dayVal * 1.12].map(v => +v.toFixed(2));
+        } else if (currentPeriod === 'monthly') {
+            labels = ["1. Hafta", "2. Hafta", "3. Hafta", "4. Hafta"];
+            const weekVal = currentMetric === 'kwh' ? currentCalc.weeklyKwh : (currentMetric === 'cost' ? currentCalc.weeklyCost : currentCalc.weeklyCarbon);
+            data = [weekVal * 0.98, weekVal * 1.02, weekVal * 0.99, weekVal * 1.01].map(v => +v.toFixed(2));
+        } else if (currentPeriod === 'yearly') {
+            labels = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+            const monthVal = currentMetric === 'kwh' ? currentCalc.monthlyKwh : (currentMetric === 'cost' ? currentCalc.monthlyCost : currentCalc.monthlyCarbon);
+            // Mevsimsel ağırlık simülasyonu
+            const seasonWeights = [1.1, 1.05, 0.95, 0.88, 0.90, 1.05, 1.18, 1.20, 0.98, 0.92, 1.02, 1.12];
+            data = seasonWeights.map(w => +(monthVal * w).toFixed(1));
+        }
+
+        // Chart.js kontrolü
+        if (typeof Chart !== 'undefined') {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext("2d");
+            chartInstance = new Chart(ctx, {
+                type: currentPeriod === 'yearly' || currentPeriod === 'weekly' ? 'bar' : 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: datasetLabel,
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: bgColor,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.35,
+                        borderRadius: 6,
+                        pointBackgroundColor: color,
+                        pointBorderColor: "#fff",
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold', size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${datasetLabel}: ${context.raw} ${unit}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                font: { family: "'Plus Jakarta Sans', sans-serif" },
+                                callback: function(val) { return val + ' ' + (unit === '₺' ? 'TL' : unit); }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: "'Plus Jakarta Sans', sans-serif" } }
+                        }
+                    }
+                }
+            });
+        } else {
+            // Çevrimdışı Canvas Fallback (Chart.js yüklenemezse çalışır)
+            renderPureCanvasChart(canvas, labels, data, datasetLabel, color, unit);
+        }
+    }
+
+    // Chart.js CDN engelli ise veya çevrimdışıysak saf Canvas ile kusursuz çizim
+    function renderPureCanvasChart(canvas, labels, data, title, color, unit) {
+        const ctx = canvas.getContext("2d");
+        const w = canvas.width = canvas.parentElement.clientWidth;
+        const h = canvas.height = 340;
+
+        ctx.clearRect(0, 0, w, h);
+        const padding = { top: 40, right: 30, bottom: 50, left: 60 };
+        const chartW = w - padding.left - padding.right;
+        const chartH = h - padding.top - padding.bottom;
+
+        const maxVal = Math.max(...data, 1) * 1.15;
+
+        // Arka plan ızgara çizgileri
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#64748b";
+        ctx.font = "11px 'Plus Jakarta Sans', sans-serif";
+        ctx.textAlign = "right";
+
+        const gridSteps = 4;
+        for (let i = 0; i <= gridSteps; i++) {
+            const y = padding.top + chartH - (i / gridSteps) * chartH;
+            const val = ((i / gridSteps) * maxVal).toFixed(1);
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(w - padding.right, y);
+            ctx.stroke();
+            ctx.fillText(val + ' ' + unit, padding.left - 8, y + 4);
+        }
+
+        // Barlar veya Çizgiler
+        const stepX = chartW / labels.length;
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+
+        labels.forEach((lbl, i) => {
+            const x = padding.left + i * stepX + stepX / 2;
+            const barH = (data[i] / maxVal) * chartH;
+            const y = padding.top + chartH - barH;
+
+            // Bar çizimi
+            ctx.beginPath();
+            ctx.roundRect(x - (stepX * 0.3), y, stepX * 0.6, barH, [4, 4, 0, 0]);
+            ctx.fill();
+
+            // Etiket
+            ctx.fillStyle = "#334155";
+            ctx.fillText(lbl, x, h - padding.bottom + 20);
+            ctx.fillStyle = color;
+        });
+
+        // Başlık
+        ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(`📊 ${title}`, padding.left, 24);
+    }
+
+    /*
+    ============================================================
+    EV SEPETİ (HOUSEHOLD CART) & DONUT GRAFİĞİ
+    ============================================================
+    */
+    function addCurrentToCart() {
+        if (!currentCalc) {
+            showToast("Lütfen önce bir cihaz seçip hesaplayın.", "warning");
+            return;
+        }
+
+        const item = {
+            id: 'item_' + Date.now(),
+            name: currentCalc.name,
+            watt: currentCalc.watt,
+            hours: currentCalc.hours,
+            count: currentCalc.count,
+            isEco: currentCalc.isEco,
+            monthlyKwh: currentCalc.monthlyKwh,
+            monthlyCost: currentCalc.monthlyCost,
+            yearlyCarbon: currentCalc.yearlyCarbon
+        };
+
+        cart.push(item);
+        saveCartToStorage();
+        updateCartBadge();
+        showToast(`"${item.name}" ev listenize eklendi!`, "success");
+    }
+
+    function renderCart() {
+        const emptyState = document.getElementById("cartEmptyState");
+        const filledState = document.getElementById("cartFilledState");
+        const tbody = document.getElementById("cartTableBody");
+        const countTitle = document.getElementById("cartCountTitle");
+
+        if (cart.length === 0) {
+            emptyState.style.display = "block";
+            filledState.style.display = "none";
+            return;
+        }
+
+        emptyState.style.display = "none";
+        filledState.style.display = "grid";
+        countTitle.innerText = cart.length;
+
+        tbody.innerHTML = "";
+        let totalKwh = 0;
+        let totalCost = 0;
+        let totalCarbon = 0;
+
+        cart.forEach((item, index) => {
+            // Her cihazın aylık tüketimini güncel tarife ile yeniden hesapla
+            const ecoMultiplier = item.isEco ? 0.65 : 1.0;
+            const itemMonthlyKwh = ((item.watt * item.hours * item.count) / 1000) * ecoMultiplier * 30;
+            const itemCost = calculateCostForKwh(itemMonthlyKwh);
+            const itemCarbonYearly = itemMonthlyKwh * 12 * CO2_FACTOR;
+
+            totalKwh += itemMonthlyKwh;
+            totalCost += itemCost;
+            totalCarbon += itemCarbonYearly;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>
+                    <strong style="color:var(--primary-dark);">${item.name}</strong>
+                    ${item.isEco ? '<span style="font-size:0.75rem; color:#15803d; font-weight:700; display:block;">🍃 Eko Mod</span>' : ''}
+                </td>
+                <td style="color:var(--text-muted); font-size:0.86rem;">
+                    ${item.watt}W &bull; ${item.hours} sa/gün
+                </td>
+                <td style="text-align:center;">
+                    <div class="qty-controls">
+                        <button class="btn-qty" onclick="changeCartQty(${index}, -1)">-</button>
+                        <span style="font-weight:700; min-width:18px; text-align:center;">${item.count}</span>
+                        <button class="btn-qty" onclick="changeCartQty(${index}, 1)">+</button>
+                    </div>
+                </td>
+                <td style="font-weight:700; color:var(--primary);">${itemMonthlyKwh.toFixed(1)} kWh</td>
+                <td style="font-weight:800; color:var(--secondary);">₺${itemCost.toFixed(1)}</td>
+                <td style="text-align:right;">
+                    <button class="btn-remove" onclick="removeCartItem(${index})" title="Kaldır">✕</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Kademeli tarife aktifse toplam fatura doğrudan kademeli eğriden alınır
+        if (tariffMode === 'tiered') {
+            totalCost = calculateCostForKwh(totalKwh);
+        }
+
+        const totalTrees = (totalCarbon / TREE_CO2_YEAR).toFixed(0);
+
+        document.getElementById("cartTotalCost").innerText = "₺" + totalCost.toFixed(2);
+        document.getElementById("cartTotalKwh").innerText = totalKwh.toFixed(1) + " kWh/ay";
+        document.getElementById("cartTotalCo2").innerText = totalCarbon.toFixed(1) + " kg CO₂";
+        document.getElementById("cartTotalTrees").innerText = totalTrees;
+
+        // Ev Enerji Karnesi Değerlendirmesi
+        updateHomeScore(totalKwh);
+
+        // Donut Grafiği Güncelle
+        updateDonutChart();
+    }
+
+    function changeCartQty(index, delta) {
+        if (!cart[index]) return;
+        cart[index].count += delta;
+        if (cart[index].count <= 0) {
+            cart.splice(index, 1);
+        }
+        saveCartToStorage();
+        updateCartBadge();
+        renderCart();
+    }
+
+    function removeCartItem(index) {
+        cart.splice(index, 1);
+        saveCartToStorage();
+        updateCartBadge();
+        renderCart();
+        showToast("Cihaz listeden silindi.", "info");
+    }
+
+    function clearCart() {
+        if (cart.length === 0) return;
+        if (confirm("Ev listenizdeki tüm cihazları silmek istediğinizden emin misiniz?")) {
+            cart = [];
+            saveCartToStorage();
+            updateCartBadge();
+            renderCart();
+            showToast("Liste temizlendi.", "info");
+        }
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById("cartCountBadge");
+        if (badge) badge.innerText = cart.length;
+    }
+
+    function saveCartToStorage() {
+        try {
+            localStorage.setItem("eco_energy_cart", JSON.stringify(cart));
+        } catch (e) {
+            console.warn("Storage kaydedilemedi", e);
+        }
+    }
+
+    function loadCartFromStorage() {
+        try {
+            const data = localStorage.getItem("eco_energy_cart");
+            if (data) {
+                cart = JSON.parse(data);
+            }
+        } catch (e) {
+            console.warn("Storage okunamadı", e);
+        }
+    }
+
+    function updateHomeScore(kwh) {
+        const title = document.getElementById("homeScoreTitle");
+        const desc = document.getElementById("homeScoreDesc");
+        const badge = document.getElementById("homeScoreBadge");
+
+        if (kwh < 150) {
+            title.innerText = "A+++ Eko-Şampiyon Hane";
+            desc.innerText = "Mükemmel! Türkiye ortalamasının çok altında, minimum karbon ayak izi.";
+            badge.innerText = "A+++";
+            badge.style.background = "#15803d";
+        } else if (kwh <= 240) {
+            title.innerText = "A Standart Tasarruflu Hane";
+            desc.innerText = "Harika! EPDK'nın 240 kWh kademe sınırının altında ekonomik tüketimdesiniz.";
+            badge.innerText = "A";
+            badge.style.background = "#16a34a";
+        } else if (kwh <= 360) {
+            title.innerText = "B Orta Tüketimli Hane";
+            desc.innerText = "240 kWh limitini aştınız. Üst kademeden faturalandırılıyorsunuz, tasarruf adımları önerilir.";
+            badge.innerText = "B";
+            badge.style.background = "#d97706";
+        } else {
+            title.innerText = "C Yüksek Tüketimli Hane";
+            desc.innerText = "Dikkat! Faturanız ve karbon salınımınız yüksek. Klimaları ve ısıtıcıları optimize edin.";
+            badge.innerText = "C";
+            badge.style.background = "#dc2626";
+        }
+    }
+
+    function updateDonutChart() {
+        const canvas = document.getElementById("donutChart");
+        if (!canvas) return;
+
+        if (cart.length === 0) {
+            if (donutInstance) donutInstance.destroy();
+            return;
+        }
+
+        const labels = cart.map(c => c.name);
+        const data = cart.map(c => {
+            const ecoMul = c.isEco ? 0.65 : 1.0;
+            return +(((c.watt * c.hours * c.count) / 1000) * ecoMul * 30).toFixed(1);
+        });
+
+        const palette = [
+            '#15803d', '#22c55e', '#10b981', '#059669', '#0d9488',
+            '#0284c7', '#3b82f6', '#6366f1', '#8b5cf6', '#d97706'
+        ];
+
+        if (typeof Chart !== 'undefined') {
+            if (donutInstance) donutInstance.destroy();
+
+            const ctx = canvas.getContext("2d");
+            donutInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: palette.slice(0, data.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const val = context.raw;
+                                    const pct = ((val / total) * 100).toFixed(1);
+                                    return ` ${context.label}: ${val} kWh (%${pct})`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '62%'
+                }
+            });
+        }
+    }
+
+    /*
+    ============================================================
+    STANDART 3+1 EV PAKETİ YÜKLE
+    ============================================================
+    */
+    function loadSampleHousehold() {
+        cart = [
+            { id: 'sample_1', name: "🧊 Buzdolabı (No-Frost / Kombi)", watt: 130, hours: 24, count: 1, isEco: false },
+            { id: 'sample_2', name: "🧺 Çamaşır Makinesi", watt: 1000, hours: 1.2, count: 1, isEco: true },
+            { id: 'sample_3', name: "🍽️ Bulaşık Makinesi", watt: 1200, hours: 1.2, count: 1, isEco: true },
+            { id: 'sample_4', name: "📺 55\" 4K Smart TV", watt: 100, hours: 5, count: 1, isEco: false },
+            { id: 'sample_5', name: "📡 Wi-Fi Modem (7/24 Açık)", watt: 15, hours: 24, count: 1, isEco: false },
+            { id: 'sample_6', name: "💡 LED Ampul (10W Tasarruflu)", watt: 10, hours: 6, count: 6, isEco: false },
+            { id: 'sample_7', name: "🔥 Elektrikli Ankastre Fırın", watt: 2400, hours: 0.6, count: 1, isEco: false },
+            { id: 'sample_8', name: "👔 Buharlı Ütü", watt: 2200, hours: 0.4, count: 1, isEco: false }
+        ];
+
+        saveCartToStorage();
+        updateCartBadge();
+        switchMainTab('cart');
+        showToast("📦 Standart 3+1 Örnek Ev Cihazları başarıyla yüklendi!", "success");
+    }
+
+    /*
+    ============================================================
+    KADEMELİ ANALİZ TABI (TAB 3)
+    ============================================================
+    */
+    function renderTierAnalysis() {
+        let totalMonthlyKwh = 0;
+        cart.forEach(c => {
+            const ecoMul = c.isEco ? 0.65 : 1.0;
+            totalMonthlyKwh += ((c.watt * c.hours * c.count) / 1000) * ecoMul * 30;
+        });
+
+        // Eğer sepet boşsa ve detaydaki cihaz varsa onu baz al
+        if (totalMonthlyKwh === 0 && currentCalc) {
+            totalMonthlyKwh = currentCalc.monthlyKwh;
+        }
+
+        const maxScale = Math.max(totalMonthlyKwh, 400);
+        const kwhText = document.getElementById("tierTotalKwhText");
+        const bar1 = document.getElementById("tierBar1");
+        const bar2 = document.getElementById("tierBar2");
+        const lowTierText = document.getElementById("lowTierAmount");
+        const highTierText = document.getElementById("highTierAmount");
+        const adviceTitle = document.getElementById("tierAdviceTitle");
+        const adviceText = document.getElementById("tierAdviceText");
+
+        kwhText.innerText = totalMonthlyKwh.toFixed(1) + " kWh / ay";
+
+        if (totalMonthlyKwh <= TIER1_LIMIT_MONTH) {
+            const pct = (totalMonthlyKwh / maxScale) * 100;
+            bar1.style.width = pct + "%";
+            bar2.style.width = "0%";
+
+            const cost = totalMonthlyKwh * TIER1_PRICE;
+            lowTierText.innerText = `${totalMonthlyKwh.toFixed(1)} kWh (₺${cost.toFixed(2)})`;
+            highTierText.innerText = `0.00 kWh (₺0.00)`;
+
+            adviceTitle.innerText = "🎉 Tebrikler! 1. Ekonomik Kademede Kalmayı Başardınız";
+            adviceText.innerText = `Aylık tüketiminiz 240 kWh limitinin altında kaldığı için tüm elektriğinizi indirimli fiyattan (₺${TIER1_PRICE}/kWh) ödüyorsunuz. Bu sayede her ay faturanızda önemli tasarruf sağlıyorsunuz.`;
+        } else {
+            const tier1Pct = (TIER1_LIMIT_MONTH / maxScale) * 100;
+            const excessKwh = totalMonthlyKwh - TIER1_LIMIT_MONTH;
+            const tier2Pct = (excessKwh / maxScale) * 100;
+
+            bar1.style.width = tier1Pct + "%";
+            bar2.style.width = tier2Pct + "%";
+
+            const lowCost = TIER1_LIMIT_MONTH * TIER1_PRICE;
+            const highCost = excessKwh * TIER2_PRICE;
+
+            lowTierText.innerText = `${TIER1_LIMIT_MONTH} kWh (₺${lowCost.toFixed(2)})`;
+            highTierText.innerText = `${excessKwh.toFixed(1)} kWh (₺${highCost.toFixed(2)})`;
+
+            const yearlyLoss = excessKwh * (TIER2_PRICE - TIER1_PRICE) * 12;
+            adviceTitle.innerText = `⚠️ 240 kWh Limiti Aşıldı: Ayda ${excessKwh.toFixed(1)} kWh Yüksek Kademede!`;
+            adviceText.innerText = `Eğer aylık tüketiminizi günde sadece ${(excessKwh/30).toFixed(1)} kWh azaltarak 240 kWh altına çekebilirseniz, yılda yaklaşık ₺${yearlyLoss.toFixed(0)} cebinizde kalacak ve doğaya yılda ${(excessKwh*12*CO2_FACTOR).toFixed(0)} kg daha az CO₂ salacaksınız!`;
+        }
+    }
+
+    /*
+    ============================================================
+    ÖZEL CİHAZ MODALI
+    ============================================================
+    */
+    function openCustomModal() {
+        document.getElementById("customDeviceModal").classList.add("active");
+        document.getElementById("customName").focus();
+    }
+
+    function closeCustomModal() {
+        document.getElementById("customDeviceModal").classList.remove("active");
+    }
+
+    function saveCustomDevice() {
+        const name = document.getElementById("customName").value.trim();
+        const watt = parseFloat(document.getElementById("customWatt").value);
+        const hours = parseFloat(document.getElementById("customHours").value);
+        const category = document.getElementById("customCategory").value;
+        const desc = document.getElementById("customDesc").value.trim() || "Kullanıcı özel cihazı";
+
+        if (!name || isNaN(watt) || watt <= 0 || isNaN(hours) || hours <= 0) {
+            showToast("Lütfen cihaz adı, güç ve süre alanlarını eksiksiz doldurun!", "warning");
+            return;
+        }
+
+        const customKey = 'custom_' + Date.now();
+        const newDevice = {
+            name: name,
+            category: category,
+            watt: watt,
+            hours: hours,
+            description: desc,
+            tips: [
+                "Cihazı kullanılmadığı anlarda tamamen kapatın.",
+                "Eko mod veya zamanlayıcı kullanarak gereksiz çalışmayı önleyin."
+            ]
+        };
+
+        devices[customKey] = newDevice;
+        saveCustomDevicesToStorage(customKey, newDevice);
+
+        // Select dropdown'a ekle
+        const select = document.getElementById("deviceSelect");
+        const opt = document.createElement("option");
+        opt.value = customKey;
+        opt.innerText = name;
+        select.appendChild(opt);
+        select.value = customKey;
+
+        closeCustomModal();
+        deviceSelected();
+        showToast(`"${name}" başarıyla eklendi ve seçildi!`, "success");
+
+        // Formu temizle
+        document.getElementById("customName").value = "";
+        document.getElementById("customWatt").value = "";
+        document.getElementById("customHours").value = "";
+        document.getElementById("customDesc").value = "";
+    }
+
+    function saveCustomDevicesToStorage(key, dev) {
+        try {
+            const stored = JSON.parse(localStorage.getItem("eco_custom_devices") || "{}");
+            stored[key] = dev;
+            localStorage.setItem("eco_custom_devices", JSON.stringify(stored));
+        } catch (e) {
+            console.warn(e);
+        }
+    }
+
+    function loadCustomDevices() {
+        try {
+            const stored = JSON.parse(localStorage.getItem("eco_custom_devices") || "{}");
+            const select = document.getElementById("deviceSelect");
+            for (let k in stored) {
+                devices[k] = stored[k];
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.innerText = stored[k].name;
+                select.appendChild(opt);
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+    }
+
+    /*
+    ============================================================
+    YARDIMCI ARAÇLAR (TOAST, COPY, PRINT)
+    ============================================================
+    */
+    function showToast(text, type = "success") {
+        const toast = document.getElementById("toastMessage");
+        const toastText = document.getElementById("toastText");
+        const toastIcon = document.getElementById("toastIcon");
+
+        toastText.innerText = text;
+        if (type === "warning") toastIcon.innerText = "⚠️";
+        else if (type === "info") toastIcon.innerText = "ℹ️";
+        else toastIcon.innerText = "✅";
+
+        toast.classList.add("show");
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3200);
+    }
+
+    function copySummaryText() {
+        if (!currentCalc) return;
+        const text = `🌿 Doğa Dostu Enerji Analiz Raporu:
+Cihaz: ${currentCalc.name}
+Güç: ${currentCalc.watt} Watt (${currentCalc.hours} saat/gün, ${currentCalc.count} adet)
+Günlük Tüketim: ${currentCalc.dailyKwh.toFixed(2)} kWh (₺${currentCalc.dailyCost.toFixed(2)})
+Aylık Fatura Payı: ${currentCalc.monthlyKwh.toFixed(1)} kWh (₺${currentCalc.monthlyCost.toFixed(2)})
+Yıllık Karbon Ayak İzi: ${currentCalc.yearlyCarbon.toFixed(1)} kg CO₂ (~${currentCalc.treesCount} adet yetişkin ağaç telafisi)
+Hesaplama: Doğa Dostu Enerji Platformu`;
+
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Özet panoya kopyalandı!", "success");
+        }).catch(() => {
+            showToast("Kopyalama başarısız oldu.", "warning");
+        });
+    }
+
+    function printReport() {
+        window.print();
+    }
+</script>
+
+</body>
+</html>
